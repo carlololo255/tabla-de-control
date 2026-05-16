@@ -6,19 +6,24 @@
     <title>Mi Álbum Virtual</title>
     
     <link rel="icon" type="image/png" href="logo.png">
-    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="container">
     
-    <div id="login-container" class="login-box">
-        <h2>Tabla de control album 2026 3 reyes</h2>
-        <p>Ingresa tu nombre para ver tu progreso guardado:</p>
-        <input type="text" id="username-input" placeholder="Puedes usar cualquier nombre" maxlength="20" autocomplete="off">
+    <div id="login-container">
+    <div class="login-box">
+        <h2>Mi Álbum Virtual 2026</h2>
+        <p>Ingresa tus datos para acceder desde cualquier dispositivo:</p>
+        <input type="text" id="username-input" placeholder="Nombre de usuario" maxlength="20" autocomplete="off">
+        <input type="password" id="password-input" placeholder="Contraseña" maxlength="20">
         <button id="login-btn">Entrar al Álbum</button>
     </div>
+</div>
 
     <div id="album-container" style="display: none;">
         <header>
