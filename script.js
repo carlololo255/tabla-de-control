@@ -180,7 +180,16 @@ function configurarBuscador() {
 
         tarjetas.forEach(tarjeta => {
             const textoTarjeta = tarjeta.querySelector('h3').innerText.toLowerCase();
-            if (textoTarjeta.includes(termino)) {
+            const cromos = tarjeta.querySelectorAll('.cromo');
+            let contieneNumero = false;
+
+            cromos.forEach(cromo => {
+                if (cromo.innerText.toLowerCase() === termino) {
+                    contieneNumero = true;
+                }
+            });
+
+            if (textoTarjeta.includes(termino) || contieneNumero) {
                 tarjeta.style.display = "";
             } else {
                 tarjeta.style.display = "none";
