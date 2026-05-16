@@ -1,3 +1,18 @@
+// Tu configuración real de Firebase obtenida de la consola
+const firebaseConfig = {
+    apiKey: "AIzaSyBoo0eqjPihAfYiETfnr-p1qWrCNjxnyj4",
+    authDomain: "album-virtual2026.firebaseapp.com",
+    databaseURL: "https://album-virtual2026-default-rtdb.firebaseio.com",
+    projectId: "album-virtual2026",
+    storageBucket: "album-virtual2026.firebasestorage.app",
+    messagingSenderId: "74601943667",
+    appId: "1:74601943665:web:a9810bb3671178ff54c1d0"
+};
+
+// Inicializar la conexión con Google Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 const ALBUM_CONFIG = {
     faseGrupos: {
         "ESTADIOS": { inicio: 1, fin: 16 },
@@ -60,30 +75,64 @@ const ALBUM_CONFIG = {
 };
 
 let usuarioActivo = "";
+let passwordActiva = "";
 let obtenidos = [];
 
 function iniciarSesion() {
     const inputNombre = document.getElementById('username-input');
-    const nombre = inputNombre.value.trim().toLowerCase();
+    const inputPass = document.getElementById('password-input');
+    
+    const nombre = inputNombre.value.trim().toLowerCase().replace(/[^a-z0-9]/g, ""); 
+    const pass = inputPass.value.trim();
 
-    if (nombre === "") {
-        alert("Por favor, ingresa un nombre válido.");
+    if (nombre === "" || pass === "") {
+        alert("Por favor, ingresa un usuario y una contraseña.");
         return;
     }
 
     usuarioActivo = nombre;
-    obtenidos = JSON.parse(localStorage.getItem(`album_progreso_${usuarioActivo}`)) || [];
+    passwordActiva = pass;
 
+    // Buscamos el usuario en tu base de datos de Firebase
+    db.ref('usuarios/' + usuarioActivo).once('value')
+        .then((snapshot) => {
+            const datosUsuario = snapshot.val();
+
+            if (datosUsuario) {
+                if (datosUsuario.password === passwordActiva) {
+                    obtenidos = datosUsuario.cromos || [];
+                    entrarAlAlbum(inputNombre.value.trim());
+                } else {
+                    alert("Contraseña incorrecta para este usuario.");
+                    usuarioActivo = "";
+                    passwordActiva = "";
+                }
+            } else {
+                obtenidos = [];
+                guardarEnNube();
+                entrarAlAlbum(inputNombre.value.trim());
+                alert("¡Cuenta nueva creada y registrada con éxito!");
+            }
+        })
+        .catch((error) => {
+            alert("Error de conexión con la base de datos.");
+            console.error(error);
+        });
+}
+
+function entrarAlAlbum(nombreOriginal) {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('album-container').style.display = 'block';
-    document.getElementById('welcome-msg').innerText = `Álbum de: ${inputNombre.value.trim()}`;
-
+    document.getElementById('welcome-msg').innerText = `Álbum de: ${nombreOriginal}`;
     generarAlbum();
 }
 
-function guardarEnStorage() {
+function guardarEnNube() {
     if (usuarioActivo) {
-        localStorage.setItem(`album_progreso_${usuarioActivo}`, JSON.stringify(obtenidos));
+        db.ref('usuarios/' + usuarioActivo).set({
+            password: passwordActiva,
+            cromos: obtenidos
+        });
         actualizarEstadisticas();
     }
 }
@@ -105,7 +154,7 @@ function crearElementoCromo(id) {
             div.classList.add('obtained');
             obtenidos.push(id);
         }
-        guardarEnStorage();
+        guardarEnNube();
     });
 
     return div;
@@ -200,8 +249,10 @@ function configurarBuscador() {
 
 function cerrarSesion() {
     usuarioActivo = "";
+    passwordActiva = "";
     obtenidos = [];
     document.getElementById('username-input').value = "";
+    document.getElementById('password-input').value = "";
     document.getElementById('search-input').value = "";
     document.getElementById('login-container').style.display = 'block';
     document.getElementById('album-container').style.display = 'none';
@@ -212,6 +263,9 @@ window.onload = () => {
     document.getElementById('logout-btn').addEventListener('click', cerrarSesion);
     
     document.getElementById('username-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') iniciarSesion();
+    });
+    document.getElementById('password-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') iniciarSesion();
     });
 
