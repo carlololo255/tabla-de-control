@@ -1,15 +1,15 @@
-// Tu configuración real de Firebase obtenida de la consola
+// Configuración extraída de tu consola de Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBoo0eqjPihAfYiETfnr-p1qWrCNjxnyj4",
     authDomain: "album-virtual2026.firebaseapp.com",
     databaseURL: "https://album-virtual2026-default-rtdb.firebaseio.com",
     projectId: "album-virtual2026",
     storageBucket: "album-virtual2026.firebasestorage.app",
-    messagingSenderId: "74601943667",
+    messagingSenderId: "74601943665",
     appId: "1:74601943665:web:a9810bb3671178ff54c1d0"
 };
 
-// Inicializar la conexión con Google Firebase
+// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -77,45 +77,99 @@ const ALBUM_CONFIG = {
 let usuarioActivo = "";
 let passwordActiva = "";
 let obtenidos = [];
+let modoActual = ""; 
 
-function iniciarSesion() {
+// REEMPLAZO DE ALERT() POR CARTELES ELEGANTES
+function mostrarAlertaPersonalizada(mensaje, tipo = "error") {
+    const alertBox = document.getElementById('custom-alert');
+    if (!alertBox) return;
+
+    alertBox.innerText = mensaje;
+    alertBox.style.display = "block";
+    alertBox.className = "custom-alert-box";
+    
+    if (tipo === "success") alertBox.classList.add('success');
+
+    setTimeout(() => { alertBox.classList.add('show'); }, 10);
+
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+        setTimeout(() => { alertBox.style.display = "none"; }, 300);
+    }, 3500);
+}
+
+function mostrarFormulario(modo) {
+    modoActual = modo;
+    document.getElementById('welcome-options').style.display = 'none';
+    document.getElementById('form-fields').style.display = 'block';
+    
+    const instruccion = document.getElementById('form-instruction');
+    const botonEnviar = document.getElementById('login-btn');
+    
+    if (modo === 'registro') {
+        instruccion.innerText = "Crea un usuario y contraseña para tu nuevo álbum:";
+        botonEnviar.innerText = "Registrar y Crear Álbum";
+    } else {
+        instruccion.innerText = "Ingresa tus datos para continuar llenando:";
+        botonEnviar.innerText = "Entrar al Álbum";
+    }
+}
+
+function volverAtras() {
+    modoActual = "";
+    document.getElementById('username-input').value = "";
+    document.getElementById('password-input').value = "";
+    document.getElementById('welcome-options').style.display = 'block';
+    document.getElementById('form-fields').style.display = 'none';
+}
+
+function procesarAutenticacion() {
     const inputNombre = document.getElementById('username-input');
     const inputPass = document.getElementById('password-input');
     
+    // Normalizar usuario (minúsculas y solo letras/números)
     const nombre = inputNombre.value.trim().toLowerCase().replace(/[^a-z0-9]/g, ""); 
     const pass = inputPass.value.trim();
 
     if (nombre === "" || pass === "") {
-        alert("Por favor, ingresa un usuario y una contraseña.");
+        mostrarAlertaPersonalizada("Por favor, completa todos los campos.");
         return;
     }
 
     usuarioActivo = nombre;
     passwordActiva = pass;
 
-    // Buscamos el usuario en tu base de datos de Firebase
     db.ref('usuarios/' + usuarioActivo).once('value')
         .then((snapshot) => {
             const datosUsuario = snapshot.val();
 
-            if (datosUsuario) {
-                if (datosUsuario.password === passwordActiva) {
-                    obtenidos = datosUsuario.cromos || [];
-                    entrarAlAlbum(inputNombre.value.trim());
+            if (modoActual === 'registro') {
+                if (datosUsuario) {
+                    mostrarAlertaPersonalizada("Ese nombre de usuario ya existe. Elige otro.");
+                    usuarioActivo = ""; passwordActiva = "";
                 } else {
-                    alert("Contraseña incorrecta para este usuario.");
-                    usuarioActivo = "";
-                    passwordActiva = "";
+                    obtenidos = [];
+                    guardarEnNube();
+                    entrarAlAlbum(inputNombre.value.trim());
+                    mostrarAlertaPersonalizada("¡Álbum creado con éxito!", "success");
                 }
-            } else {
-                obtenidos = [];
-                guardarEnNube();
-                entrarAlAlbum(inputNombre.value.trim());
-                alert("¡Cuenta nueva creada y registrada con éxito!");
+            } else if (modoActual === 'login') {
+                if (datosUsuario) {
+                    if (datosUsuario.password === passwordActiva) {
+                        obtenidos = datosUsuario.cromos || [];
+                        entrarAlAlbum(inputNombre.value.trim());
+                    } else {
+                        mostrarAlertaPersonalizada("Contraseña incorrecta para este usuario.");
+                        usuarioActivo = ""; passwordActiva = "";
+                    }
+                } else {
+                    mostrarAlertaPersonalizada("El usuario no existe. Selecciona 'Crear nuevo álbum'.");
+                    usuarioActivo = ""; passwordActiva = "";
+                }
             }
         })
         .catch((error) => {
-            alert("Error de conexión con la base de datos.");
+            mostrarAlertaPersonalizada("Error al conectar con Firebase.");
             console.error(error);
         });
 }
@@ -142,9 +196,7 @@ function crearElementoCromo(id) {
     div.classList.add('cromo');
     div.innerText = id;
     
-    if (obtenidos.includes(id)) {
-        div.classList.add('obtained');
-    }
+    if (obtenidos.includes(id)) div.classList.add('obtained');
 
     div.addEventListener('click', () => {
         if (div.classList.contains('obtained')) {
@@ -222,7 +274,6 @@ function actualizarEstadisticas() {
 
 function configurarBuscador() {
     const searchInput = document.getElementById('search-input');
-    
     searchInput.addEventListener('input', (e) => {
         const termino = e.target.value.toLowerCase().trim();
         const tarjetas = document.querySelectorAll('.card-subseccion');
@@ -233,9 +284,7 @@ function configurarBuscador() {
             let contieneNumero = false;
 
             cromos.forEach(cromo => {
-                if (cromo.innerText.toLowerCase() === termino) {
-                    contieneNumero = true;
-                }
+                if (cromo.innerText.toLowerCase() === termino) contieneNumero = true;
             });
 
             if (textoTarjeta.includes(termino) || contieneNumero) {
@@ -248,45 +297,18 @@ function configurarBuscador() {
 }
 
 function cerrarSesion() {
-    usuarioActivo = "";
-    passwordActiva = "";
-    obtenidos = [];
+    usuarioActivo = ""; passwordActiva = ""; obtenidos = [];
     document.getElementById('username-input').value = "";
     document.getElementById('password-input').value = "";
-    document.getElementById('search-input').value = "";
+    volverAtras();
     document.getElementById('login-container').style.display = 'block';
     document.getElementById('album-container').style.display = 'none';
 }
 
 window.onload = () => {
-    document.getElementById('login-btn').addEventListener('click', iniciarSesion);
+    document.getElementById('btn-choose-register').addEventListener('click', () => mostrarFormulario('registro'));
+    document.getElementById('btn-choose-login').addEventListener('click', () => mostrarFormulario('login'));
+    document.getElementById('btn-back').addEventListener('click', volverAtras);
+    document.getElementById('login-btn').addEventListener('click', procesarAutenticacion);
     document.getElementById('logout-btn').addEventListener('click', cerrarSesion);
-    
-    document.getElementById('username-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') iniciarSesion();
-    });
-    document.getElementById('password-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') iniciarSesion();
-    });
-
-    const themeBtn = document.getElementById('theme-btn');
-    
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        if (themeBtn) themeBtn.innerText = "☀️ Modo Claro";
-    }
-
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            
-            if (document.body.classList.contains('dark-mode')) {
-                themeBtn.innerText = "☀️ Modo Claro";
-                localStorage.setItem('theme', 'dark');
-            } else {
-                themeBtn.innerText = "🌙 Modo Oscuro";
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    }
 };
