@@ -50,7 +50,6 @@ body {
     margin-bottom: 25px;
 }
 
-/* AQUÍ ESTÁ EL TRUCO: Agregamos input[type="password"] para que comparta el diseño */
 .login-box input[type="text"],
 .login-box input[type="password"] {
     width: 100%;
@@ -59,9 +58,9 @@ body {
     border: 2px solid #cbd5e1;
     border-radius: 8px;
     font-size: 1rem;
-    box-sizing: border-box;
+    box-sizing: border-box; 
     transition: all 0.3s ease;
-    background-color: #ffffff; /* Color de fondo por defecto */
+    background-color: #f8fafc;
     color: #333333;
 }
 
