@@ -79,7 +79,7 @@ let passwordActiva = "";
 let obtenidos = [];
 let modoActual = ""; 
 
-// REEMPLAZO DE ALERT() POR CARTELES ELEGANTES
+// REEMPLAZO DE ALERT() POR CARTELES ELEGANTES EN PANTALLA
 function mostrarAlertaPersonalizada(mensaje, tipo = "error") {
     const alertBox = document.getElementById('custom-alert');
     if (!alertBox) return;
@@ -159,6 +159,7 @@ function procesarAutenticacion() {
                         obtenidos = datosUsuario.cromos || [];
                         entrarAlAlbum(inputNombre.value.trim());
                     } else {
+                        // AQUÍ CORREGIDO: Quitado el alert() molesto
                         mostrarAlertaPersonalizada("Contraseña incorrecta para este usuario.");
                         usuarioActivo = ""; passwordActiva = "";
                     }
@@ -296,8 +297,11 @@ function configurarBuscador() {
     });
 }
 
+// CERRAR SESIÓN TOTALMENTE OPERATIVO
 function cerrarSesion() {
-    usuarioActivo = ""; passwordActiva = ""; obtenidos = [];
+    usuarioActivo = ""; 
+    passwordActiva = ""; 
+    obtenidos = [];
     document.getElementById('username-input').value = "";
     document.getElementById('password-input').value = "";
     volverAtras();
@@ -305,6 +309,7 @@ function cerrarSesion() {
     document.getElementById('album-container').style.display = 'none';
 }
 
+// CONFIGURACIÓN DE LOS BOTONES AL CARGAR LA PÁGINA
 window.onload = () => {
     document.getElementById('btn-choose-register').addEventListener('click', () => mostrarFormulario('registro'));
     document.getElementById('btn-choose-login').addEventListener('click', () => mostrarFormulario('login'));
