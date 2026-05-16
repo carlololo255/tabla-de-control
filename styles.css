@@ -10,8 +10,8 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #eff6ff, #dbeafe); 
-    color: var(--text);
+    background: linear-gradient(135deg, #1e293b, #0f172a); /* Fondo oscuro general como tu captura */
+    color: #f1f5f9;
     margin: 0;
     padding: 20px;
     min-height: 100vh;
@@ -23,21 +23,21 @@ body {
 }
 
 /* ==========================================================================
-   ESTILO CORREGIDO PARA LA CAJA DE INICIO DE SESIÓN (LOGIN)
+   ESTILO DE LA CAJA DE INICIO / REGISTRO
    ========================================================================== */
 .login-box {
     max-width: 420px;
     margin: 80px auto;
     padding: 40px 30px;
-    background: #ffffff;
+    background: #1e293b; /* Caja oscura idéntica a tu diseño */
     border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     text-align: center;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #334155;
 }
 
 .login-box h2 {
-    color: var(--azul-principal);
+    color: #38bdf8; /* Azul brillante para el título */
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.8rem;
@@ -45,36 +45,75 @@ body {
 }
 
 .login-box p {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.95rem;
     margin-bottom: 25px;
 }
 
+#form-instruction {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    margin-bottom: 15px;
+}
+
+/* DISEÑO CORREGIDO PARA AMBOS INPUTS (USUARIO Y CONTRASEÑA) */
 .login-box input[type="text"],
 .login-box input[type="password"] {
     width: 100%;
     padding: 12px 16px;
     margin-bottom: 20px;
-    border: 2px solid #cbd5e1;
+    border: 2px solid #475569;
     border-radius: 8px;
     font-size: 1rem;
-    box-sizing: border-box; 
+    box-sizing: border-box; /* Evita que se deformen o salgan de la caja */
     transition: all 0.3s ease;
-    background-color: #f8fafc;
-    color: #333333;
+    background-color: #0f172a; /* Fondo oscuro interno */
+    color: white;
 }
 
-/* Efecto focus iluminado para ambos campos */
+/* Efecto foco azul cuando escribes */
 .login-box input[type="text"]:focus,
 .login-box input[type="password"]:focus {
-    border-color: var(--azul-principal);
+    border-color: #38bdf8;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
-.login-box button {
+/* ==========================================================================
+   BOTONES NUEVOS DE SELECCIÓN Y LOGUEO
+   ========================================================================== */
+.btn-main {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
+    background: #22c55e; /* Verde para Crear Nuevo Álbum */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    transition: background-color 0.2s;
+}
+.btn-main:hover { background-color: #16a34a; }
+
+.btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background: var(--azul-principal); /* Azul para Continuar Llenando */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+.btn-secondary:hover { background-color: #1d4ed8; }
+
+#login-btn {
+    width: 100%;
+    padding: 14px;
     background: var(--azul-principal);
     color: white;
     border: none;
@@ -82,33 +121,67 @@ body {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: background-color 0.2s;
+}
+#login-btn:hover { background-color: #1d4ed8; }
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+}
+.btn-link:hover { color: #38bdf8; }
+
+/* ==========================================================================
+   ALERTA PERSONALIZADA (REEMPLAZO DE ALERT())
+   ========================================================================== */
+.custom-alert-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background-color: #ef4444; /* Rojo advertencia */
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+    z-index: 10000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    min-width: 280px;
+    max-width: 90%;
+    opacity: 0;
 }
 
-.login-box button:hover {
-    background-color: #1d4ed8;
+.custom-alert-box.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
 
-.login-box button:active {
-    transform: scale(0.98);
+.custom-alert-box.success {
+    background-color: #22c55e; /* Verde éxito */
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
 }
 
 /* ==========================================================================
-   SECCIONES DEL ÁLBUM, CROMOS Y MODOS OSCUROS (SE MANTIENEN IGUAL)
+   SECCIONES DEL ÁLBUM, CROMOS Y CONTROLES (SE MANTIENEN)
    ========================================================================== */
 header {
-    background-color: var(--azul-principal);
+    background-color: #1e293b;
     color: white;
     padding: 24px;
     border-radius: 12px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 10px rgba(30, 58, 138, 0.15);
+    border: 1px solid #334155;
 }
 
-header h1 {
-    margin: 0 0 15px 0;
-    font-size: 1.8rem;
-}
+header h1 { margin: 0 0 15px 0; font-size: 1.8rem; }
 
 .header-controls {
     display: flex;
@@ -121,8 +194,7 @@ header h1 {
 #stats {
     font-size: 1.1rem;
     font-weight: bold;
-    letter-spacing: 0.5px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     padding: 6px 14px;
     border-radius: 20px;
 }
@@ -135,13 +207,9 @@ header h1 {
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.9rem;
     transition: background-color 0.2s;
 }
-
-.btn-danger:hover {
-    background-color: #dc2626;
-}
+.btn-danger:hover { background-color: #dc2626; }
 
 .section-title {
     color: white;
@@ -150,8 +218,10 @@ header h1 {
     margin-top: 40px;
     font-size: 1.5rem;
     font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+
+.fase-grupos-section { background-color: var(--verde-oscuro); }
+.especiales-section { background-color: var(--rojo-oscuro); }
 
 .grid-grupos {
     display: grid;
@@ -161,10 +231,10 @@ header h1 {
 }
 
 .card-subseccion {
-    background-color: var(--fondo-tarjeta-defecto);
+    background-color: #1e293b;
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     border-top: 6px solid var(--borde-defecto); 
 }
 
@@ -172,53 +242,10 @@ header h1 {
     margin-top: 0;
     margin-bottom: 12px;
     font-size: 1.1rem;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid #334155;
     padding-bottom: 5px;
-    color: var(--text); 
-    display: flex;
-    align-items: center;
-    gap: 8px; 
+    color: #f1f5f9; 
 }
-
-#fase-grupos .section-title, .fase-grupos-section { background-color: var(--verde-oscuro); }
-#secciones-especiales .section-title, .especiales-section { background-color: var(--rojo-oscuro); }
-
-/* --- CLUBES Y BANDERAS --- */
-.card-subseccion.catar { background-color: #f6e8ea; border-top-color: #8a1538; }
-.card-subseccion.catar h3::before { content: "🇶🇦"; }
-
-.card-subseccion.ecuador { background-color: #fffbeb; border-top-color: #ffdd00; }
-.card-subseccion.ecuador h3::before { content: "🇪🇨"; }
-
-.card-subseccion.senegal { background-color: #f0fdf4; border-top-color: #00853f; }
-.card-subseccion.senegal h3::before { content: "🇸🇳"; }
-
-.card-subseccion.paises-bajos { background-color: #fff7ed; border-top-color: #21468b; }
-.card-subseccion.paises-bajos h3::before { content: "🇳🇱"; }
-
-.card-subseccion.inglaterra { background-color: #f8fafc; border-top-color: #ce1126; }
-.card-subseccion.inglaterra h3::before { content: "🏴_🇪_󠁮_󠁧_"; }
-
-.card-subseccion.iran { background-color: #fbfdfb; border-top-color: #da251d; }
-.card-subseccion.iran h3::before { content: "🇮🇷"; }
-
-.card-subseccion.estados-unidos { background-color: #eff6ff; border-top-color: #b22234; }
-.card-subseccion.estados-unidos h3::before { content: "🇺🇸"; }
-
-.card-subseccion.gales { background-color: #fef2f2; border-top-color: #00ad43; }
-.card-subseccion.gales h3::before { content: "🏴_󠁢_󠁷_󠁬_󠁳_"; }
-
-.card-subseccion.argentina { background-color: #f0f9ff; border-top-color: #74acdf; }
-.card-subseccion.argentina h3::before { content: "🇦🇷"; }
-
-.card-subseccion.arabia-saudita { background-color: #f0fdf4; border-top-color: #006c35; }
-.card-subseccion.arabia-saudita h3::before { content: "🇸🇦"; }
-
-.card-subseccion.mexico { background-color: #f4fbf7; border-top-color: #006847; }
-.card-subseccion.mexico h3::before { content: "🇲🇽"; }
-
-.card-subseccion.polonia { background-color: #fff5f5; border-top-color: #dc143c; }
-.card-subseccion.polonia h3::before { content: "🇵🇱"; }
 
 .cromos-container {
     display: grid;
@@ -227,36 +254,28 @@ header h1 {
 }
 
 .cromo {
-    background-color: #e2e8f0; 
-    color: #374151;            
-    border: 1px solid #cbd5e1; 
+    background-color: #334155; 
+    color: #cbd5e1;            
+    border: 1px solid #475569; 
     border-radius: 6px;
     padding: 8px 2px;
     text-align: center;
     font-size: 0.85rem;
     cursor: pointer;
     user-select: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s;
     font-weight: 700;
 }
 
 .cromo:hover {
     transform: scale(1.12);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    filter: brightness(0.9);
+    filter: brightness(1.2);
 }
 
 .cromo.obtained {
     background-color: var(--obtained) !important;
     color: white !important;
     border-color: #16a34a !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-
-.search-container {
-    margin-bottom: 25px;
-    display: flex;
-    justify-content: center;
 }
 
 #search-input {
@@ -264,103 +283,10 @@ header h1 {
     max-width: 500px;
     padding: 12px 20px;
     font-size: 1rem;
-    border: 2px solid #cbd5e1;
+    border: 2px solid #475569;
     border-radius: 30px;
     outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-#search-input:focus {
-    border-color: var(--azul-principal);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-}
-
-.grupo-bloque {
-    margin-bottom: 35px;
-    background-color: rgba(255, 255, 255, 0.4);
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px dashed rgba(0, 0, 0, 0.05);
-}
-
-.grupo-titulo-interno {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--verde-oscuro);
-    margin-top: 0;
-    margin-bottom: 15px;
-    padding-bottom: 5px;
-    border-bottom: 2px solid var(--verde-oscuro);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.grupo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-/* --- ADAPTACIONES PARA EL MODO OSCURO EN AMBOS INPUTS --- */
-body.dark-mode {
-    --azul-principal: #1d4ed8; 
-    --verde-oscuro: #0f291e;   
-    --rojo-oscuro: #450a0a;    
-    --text: #f1f5f9;
-    --borde-defecto: #475569;  
-    --fondo-tarjeta-defecto: #1e293b;
-    background: linear-gradient(135deg, #0f172a, #1e293b); 
-}
-
-body.dark-mode .login-box {
-    background: #1e293b;
-    border-color: #334155;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-body.dark-mode .login-box h2 { color: #38bdf8; }
-body.dark-mode .login-box p { color: #94a3b8; }
-
-/* Aquí corregimos el Modo Oscuro para que afecte tanto a usuario como a contraseña */
-body.dark-mode .login-box input[type="text"],
-body.dark-mode .login-box input[type="password"] {
-    background-color: #0f172a;
-    border-color: #475569;
-    color: white;
-}
-
-body.dark-mode .login-box input[type="text"]:focus,
-body.dark-mode .login-box input[type="password"]:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-}
-
-body.dark-mode header {
     background-color: #1e293b;
-    border: 1px solid #334155;
-}
-body.dark-mode .cromo {
-    background-color: #334155;
-    color: #cbd5e1;
-    border-color: #475569;
-}
-body.dark-mode #search-input {
-    background-color: #1e293b;
-    border-color: #475569;
     color: white;
 }
-
-.btn-theme {
-    padding: 8px 16px;
-    background-color: #64748b;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-}
-.btn-theme:hover {
-    background-color: #475569;
-}
+.search-container { margin-bottom: 25px; display: flex; justify-content: center; }
